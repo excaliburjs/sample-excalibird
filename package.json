@@ -1,0 +1,28 @@
+{
+  "name": "sample-excalibird",
+  "version": "0.0.0",
+  "description": "Getting started with Excalibur ",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "repository": {},
+  "keywords": [
+    "excalibur",
+    "excaliburjs",
+    "vite",
+    "game-engine"
+  ],
+  "author": "",
+  "license": "",
+  "bugs": {},
+  "homepage": "",
+  "devDependencies": {
+    "excalibur": "0.29.3",
+    "typescript": "5.5.4",
+    "vite": "5.4.2"
+  }
+}
