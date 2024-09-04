@@ -5,7 +5,7 @@ export const Config = {
     BirdAcceleration: 1200,
     BirdJumpVelocity: -800,
     BirdMinVelocity: -500,
-    BirdMaxVelocity: 1000, 
+    BirdMaxVelocity: 500, 
     PipeSpeed: 200,
     PipeInterval: 1500,
     PipeGap: 200

@@ -6,6 +6,7 @@ import { Level } from "./level";
 // Step 2
 export class Bird extends ex.Actor {
     playing = false;
+    jumping = false;
     constructor(private level: Level) {
         super({
             pos: Config.BirdStartPos,
@@ -29,15 +30,25 @@ export class Bird extends ex.Actor {
         });
     }
 
+    private isInputActive(engine: ex.Engine) {
+        return (engine.input.keyboard.isHeld(ex.Keys.Space) ||
+                engine.input.pointers.isDown(0))
+    }
+
     // Step 4
     override onPostUpdate(engine: ex.Engine, elapsedMs: number): void {
         if (!this.playing) return;
 
         // if the space bar or the first pointer was down
-        if (engine.input.keyboard.wasPressed(ex.Keys.Space) ||
-            engine.input.pointers.wasDown(0)) {
+        if (!this.jumping && this.isInputActive(engine)) {
             this.vel.y += Config.BirdJumpVelocity;
+            this.jumping = true;
         }
+
+        if (!this.isInputActive(engine)) {
+            this.jumping = false;
+        }
+
         this.vel.y = ex.clamp(this.vel.y, Config.BirdMinVelocity, Config.BirdMaxVelocity);
 
         // The "speed" the bird will move relative to pipes
