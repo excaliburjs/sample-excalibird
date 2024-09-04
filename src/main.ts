@@ -6,7 +6,8 @@ import { Level } from './level';
 
 const game = new ex.Engine({
   width: 400,
-  height: 600,
+  height: 500,
+  pixelArt: true,
   displayMode: ex.DisplayMode.FitScreen,
   scenes: { Level }
 });

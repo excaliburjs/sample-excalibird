@@ -8,8 +8,7 @@ export class Bird extends ex.Actor {
     playing = false;
     constructor(private level: Level) {
         super({
-            x: 200,
-            y: 300,
+            pos: Config.BirdStartPos,
             width: 32,
             height: 32,
             color: ex.Color.Yellow
@@ -31,7 +30,7 @@ export class Bird extends ex.Actor {
     }
 
     // Step 4
-    override onPostUpdate(engine: ex.Engine, delta: number): void {
+    override onPostUpdate(engine: ex.Engine, elapsedMs: number): void {
         if (!this.playing) return;
 
         // if the space bar or the first pointer was down
@@ -48,14 +47,14 @@ export class Bird extends ex.Actor {
     // Step 8
     start() {
         this.playing = true;
-        this.pos = ex.vec(200, 300); // starting position
-        this.acc = ex.vec(0, 1500); // pixels per second per second
+        this.pos = Config.BirdStartPos; // starting position
+        this.acc = ex.vec(0, Config.BirdAcceleration); // pixels per second per second
     }
 
     // Step 8
     reset() {
         this.playing = false;
-        this.pos = ex.vec(200, 300); // starting position
+        this.pos = Config.BirdStartPos; // starting position
         this.vel = ex.vec(0, 0); // pixels per second
         this.acc = ex.vec(0, 0); // pixels per second per second
     }
