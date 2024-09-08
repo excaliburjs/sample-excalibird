@@ -3,3 +3,8 @@
     background-color: black;
   }
 }
+
+body {
+  display: flex;
+  justify-content: center;
+}

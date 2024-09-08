@@ -1,7 +1,7 @@
 import * as ex from "excalibur";
 
 export const Config = {
-    BirdStartPos: ex.vec(100, 200),
+    BirdStartPos: ex.vec(200, 300),
     BirdAcceleration: 1200,
     BirdJumpVelocity: -800,
     BirdMinVelocity: -500,

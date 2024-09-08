@@ -31,6 +31,17 @@ export class Level extends ex.Scene {
             size: 20,
             color: ex.Color.White
         })
+    });
+    bestLabel = new ex.Label({
+        text: 'Best: 0',
+        x: 400,
+        y: 0,
+        z: 10,
+        font: new ex.Font({
+            size: 20,
+            color: ex.Color.White,
+            textAlign: ex.TextAlign.End
+        })
     })
     onInitialize(engine: ex.Engine): void {
         this.add(this.bird);
@@ -38,6 +49,7 @@ export class Level extends ex.Scene {
         // Step 8
         this.add(this.startGameLabel);
         this.add(this.scoreLabel);
+        this.add(this.bestLabel);
 
         this.ground = new Ground(ex.vec(0, engine.screen.drawHeight - 64))
         this.add(this.ground);
