@@ -2,6 +2,8 @@ import * as ex from "excalibur";
 import { Resources } from "./resources";
 import { Config } from "./config";
 import { Level } from "./level";
+import { Pipe } from "./pipe";
+import { Ground } from "./ground";
 
 // Step 2
 export class Bird extends ex.Actor {
@@ -10,9 +12,10 @@ export class Bird extends ex.Actor {
     constructor(private level: Level) {
         super({
             pos: Config.BirdStartPos,
-            width: 32,
-            height: 32,
-            color: ex.Color.Yellow
+            width: 16,
+            height: 16,
+            color: ex.Color.Yellow,
+            z: 11
         });
     }
 
@@ -77,8 +80,11 @@ export class Bird extends ex.Actor {
     }
 
     // Step 9
-    override onCollisionStart(): void {
-        console.log("collision");
-        this.level.triggerGameOver();
+    override onCollisionStart(self: ex.Collider, other: ex.Collider): void {
+        if (other.owner instanceof Pipe ||
+            other.owner instanceof Ground
+        ) {
+            this.level.triggerGameOver();
+        }
     }
 }

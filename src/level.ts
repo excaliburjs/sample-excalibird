@@ -2,6 +2,7 @@ import * as ex from "excalibur";
 import { Bird } from "./bird";
 import { PipeFactory } from "./pipe-factory";
 import { Config } from "./config";
+import { Ground } from "./ground";
 
 // Step 7
 export class Level extends ex.Scene {
@@ -9,6 +10,7 @@ export class Level extends ex.Scene {
     random = new ex.Random();
     pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
     bird = new Bird(this);
+    ground!: Ground;
     startGameLabel = new ex.Label({
         text: 'Tap to Start',
         x: 200,
@@ -37,6 +39,9 @@ export class Level extends ex.Scene {
         this.add(this.startGameLabel);
         this.add(this.scoreLabel);
 
+        this.ground = new Ground(ex.vec(0, engine.screen.drawHeight - 64))
+        this.add(this.ground);
+
 
         // Step 9
         // const pipe = new Pipe(ex.vec(300, 400));
@@ -55,6 +60,7 @@ export class Level extends ex.Scene {
             this.startGameLabel.graphics.visible = false;
             this.bird.start();
             this.pipeFactory.start();
+            this.ground.start();
         });
     }
 
@@ -68,6 +74,7 @@ export class Level extends ex.Scene {
     triggerGameOver() {
         this.pipeFactory.stop();
         this.bird.stop();
+        this.ground.stop();
         this.showStartInstructions();
     }
 }

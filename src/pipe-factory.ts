@@ -2,6 +2,7 @@ import * as ex from "excalibur";
 import { Pipe } from "./pipe";
 import { Config } from "./config";
 import { Level } from "./level";
+import { ScoreTrigger } from "./score-trigger";
 
 // Step 9
 export class PipeFactory {
@@ -25,22 +26,33 @@ export class PipeFactory {
     spawnPipes() {
         if (!this.spawning) return;
 
-        const randomPipePosition = this.random.floating(0, this.level.engine.screen.resolution.height - 200);
+        const randomPipePosition = this.random.floating(0, this.level.engine.screen.resolution.height - Config.PipeGap);
 
-        const bottomPipe = new Pipe(ex.vec(this.level.engine.screen.drawWidth, randomPipePosition + Config.PipeGap), 'bottom');
+        const bottomPipe = new Pipe(
+            ex.vec(this.level.engine.screen.drawWidth, randomPipePosition + Config.PipeGap),
+            'bottom'
+        );
         bottomPipe.once('exitviewport', () => {
             this.removePipe(bottomPipe);
         });
         this.level.add(bottomPipe);
         this.pipes.push(bottomPipe);
 
-        const topPipe = new Pipe(ex.vec(this.level.engine.screen.drawWidth, randomPipePosition), 'top');
+        const topPipe = new Pipe(
+            ex.vec(this.level.engine.screen.drawWidth, randomPipePosition),
+            'top'
+        );
         topPipe.once('exitviewport', () => {
             this.removePipe(topPipe);
-            this.level.incrementScore();
         });
         this.level.add(topPipe);
         this.pipes.push(topPipe);
+
+        const scoreTrigger = new ScoreTrigger(
+            ex.vec(this.level.engine.screen.drawWidth, randomPipePosition),
+            this.level
+        );
+        this.level.add(scoreTrigger);
 
     }
 
