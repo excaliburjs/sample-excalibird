@@ -20,6 +20,7 @@ export class Ground extends ex.Actor {
         this.groundSprite.destSize.width = engine.screen.drawWidth;
         this.graphics.use(this.groundSprite);
     }
+
     onPostUpdate(engine: ex.Engine, elapsedMs: number): void {
         if (!this.moving) return;
         this.groundSprite.sourceView.x += Config.PipeSpeed * (elapsedMs / 1000);

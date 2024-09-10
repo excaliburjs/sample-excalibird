@@ -12,6 +12,7 @@ export class Level extends ex.Scene {
     pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
     bird = new Bird(this);
     ground!: Ground;
+
     startGameLabel = new ex.Label({
         text: 'Tap to Start',
         x: 200,
@@ -23,6 +24,7 @@ export class Level extends ex.Scene {
             textAlign: ex.TextAlign.Center
         })
     });
+
     scoreLabel = new ex.Label({
         text: 'Score: 0',
         x: 0,
@@ -33,6 +35,7 @@ export class Level extends ex.Scene {
             color: ex.Color.White
         })
     });
+
     bestLabel = new ex.Label({
         text: 'Best: 0',
         x: 400,
@@ -43,7 +46,8 @@ export class Level extends ex.Scene {
             color: ex.Color.White,
             textAlign: ex.TextAlign.End
         })
-    })
+    });
+
     onInitialize(engine: ex.Engine): void {
         this.add(this.bird);
 
