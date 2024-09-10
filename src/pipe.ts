@@ -14,6 +14,8 @@ export class Pipe extends ex.Actor {
             collisionType: ex.CollisionType.Fixed,
             vel: ex.vec(-Config.PipeSpeed, 0)
         })
+
+        this.on('exitviewport', () => this.kill());
     }
 
     // Step 9.5

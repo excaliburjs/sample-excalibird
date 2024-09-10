@@ -67,10 +67,8 @@ export class Bird extends ex.Actor {
 
     // Step 8
     reset() {
-        this.playing = false;
         this.pos = Config.BirdStartPos; // starting position
-        this.vel = ex.vec(0, 0); // pixels per second
-        this.acc = ex.vec(0, 0); // pixels per second per second
+        this.stop();
     }
 
     stop() {

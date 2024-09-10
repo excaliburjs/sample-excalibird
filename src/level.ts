@@ -7,6 +7,7 @@ import { Ground } from "./ground";
 // Step 7
 export class Level extends ex.Scene {
     score: number = 0;
+    best: number = 0;
     random = new ex.Random();
     pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
     bird = new Bird(this);
@@ -54,14 +55,28 @@ export class Level extends ex.Scene {
         this.ground = new Ground(ex.vec(0, engine.screen.drawHeight - 64))
         this.add(this.ground);
 
+        const bestScore = localStorage.getItem('bestScore');
+        if (bestScore) {
+            this.best = +bestScore;
+            this.setBestScore(this.best);
+        } else {
+            this.setBestScore(0);
+        }
 
         // Step 9
-        // const pipe = new Pipe(ex.vec(300, 400));
-        // this.add(pipe);
         this.showStartInstructions();
     }
     incrementScore() {
         this.scoreLabel.text = `Score: ${++this.score}`;
+        this.setBestScore(this.score);
+    }
+
+    setBestScore(score: number) {
+        if (score > this.best) {
+            localStorage.setItem('bestScore', this.score.toString());
+            this.best = score;
+        }
+        this.bestLabel.text = `Best: ${this.best}`;
     }
 
     showStartInstructions() {
