@@ -60,7 +60,11 @@ export class PipeFactory {
     stop() {
         this.timer.stop();
         for (const actor of this.level.actors) {
-            actor.vel = ex.vec(0, 0);
+            if (actor instanceof Pipe ||
+                actor instanceof ScoreTrigger
+            ) {
+                actor.vel = ex.vec(0, 0);
+            }
         }
     }
 }
