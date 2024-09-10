@@ -20,8 +20,10 @@
   "license": "",
   "bugs": {},
   "homepage": "",
+  "dependencies": {
+    "excalibur": "0.29.3"
+  },
   "devDependencies": {
-    "excalibur": "0.29.3",
     "typescript": "5.5.4",
     "vite": "5.4.2"
   }
