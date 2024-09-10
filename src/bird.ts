@@ -20,7 +20,7 @@ export class Bird extends ex.Actor {
     }
 
     // Step 3
-    override onInitialize(engine: ex.Engine): void {
+    override onInitialize(): void {
         // this.acc = ex.vec(0, 1500); // pixels per second per second
 
         // Step 6
@@ -39,7 +39,7 @@ export class Bird extends ex.Actor {
     }
 
     // Step 4
-    override onPostUpdate(engine: ex.Engine, elapsedMs: number): void {
+    override onPostUpdate(engine: ex.Engine): void {
         if (!this.playing) return;
 
         // if the space bar or the first pointer was down
@@ -78,7 +78,7 @@ export class Bird extends ex.Actor {
     }
 
     // Step 9
-    override onCollisionStart(self: ex.Collider, other: ex.Collider): void {
+    override onCollisionStart(_self: ex.Collider, other: ex.Collider): void {
         if (other.owner instanceof Pipe ||
             other.owner instanceof Ground
         ) {

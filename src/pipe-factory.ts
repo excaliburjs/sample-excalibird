@@ -11,7 +11,7 @@ export class PipeFactory {
     constructor(
         private level: Level,
         private random: ex.Random,
-        private intervalMs: number) {
+        intervalMs: number) {
             this.timer = new ex.Timer({
                 interval: intervalMs,
                 repeats: true,

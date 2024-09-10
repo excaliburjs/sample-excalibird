@@ -19,7 +19,7 @@ export class Pipe extends ex.Actor {
     }
 
     // Step 9.5
-    override onInitialize(engine: ex.Engine): void {
+    override onInitialize(): void {
         const pipeEnd = Resources.PipeImage.toSprite();
         // Stretch the pipe sprite
         // by default ImageSource use clamp which re-uses the border pixels 
