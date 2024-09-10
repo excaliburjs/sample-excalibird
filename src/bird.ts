@@ -14,8 +14,7 @@ export class Bird extends ex.Actor {
             pos: Config.BirdStartPos,
             width: 16,
             height: 16,
-            color: ex.Color.Yellow,
-            z: 11
+            color: ex.Color.Yellow
         });
     }
 

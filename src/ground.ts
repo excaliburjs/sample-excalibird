@@ -11,7 +11,7 @@ export class Ground extends ex.Actor {
             anchor: ex.vec(0, 0),
             height: 64,
             width: 400,
-            z: 10
+            z: 1
         })
     }
 

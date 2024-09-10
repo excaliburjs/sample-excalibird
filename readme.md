@@ -165,7 +165,7 @@ export class Ground extends ex.Actor {
             height: 64,
             width: 400,
             color: ex.Color.fromHex('#bd9853')
-            z: 1
+            z: 1 // position the ground above everything
         })
     }
 }
@@ -288,7 +288,8 @@ export class Pipe extends ex.Actor {
                 ex.vec(0, 0) : // bottom anchor from top left
                 ex.vec(0, 1), // top anchor from the bottom left
             color: ex.Color.Green,
-            vel: ex.vec(-200, 0)
+            vel: ex.vec(-200, 0),
+            z: -1 // position the pipe under everything
         })
 
         this.on('exitviewport', () => this.kill());

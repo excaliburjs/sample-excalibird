@@ -11,7 +11,8 @@ export class Pipe extends ex.Actor {
             height: 1000,
             anchor: type === 'bottom' ? ex.vec(0, 0) : ex.vec(0, 1),
             color: ex.Color.Green,
-            vel: ex.vec(-Config.PipeSpeed, 0)
+            vel: ex.vec(-Config.PipeSpeed, 0),
+            z: -1
         })
 
         this.on('exitviewport', () => this.kill());
