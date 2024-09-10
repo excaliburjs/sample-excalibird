@@ -443,7 +443,13 @@ export class PipeFactory {
 
         const bottomPipe = new Pipe(
             ex.vec(this.level.engine.screen.drawWidth, randomPipePosition + Config.PipeGap),
-            'bottom'
+            'bottom'export class Level extends ex.Scene {
+    score: number = 0;
+    best: number = 0;
+    random = new ex.Random();
+    pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
+    bird = new Bird(this);
+    ground!: Ground;
         );
         this.level.add(bottomPipe);
 
@@ -476,3 +482,31 @@ export class PipeFactory {
     }
 }
 ```
+
+With this new `PipeFactory` we'll add it to our `Level` with a new `ex.Random`. If no seed is provided to `new ex.Random()` it'll use `Date.now()`
+
+```typescript
+// level.ts
+
+export class Level extends ex.Scene {
+    random = new ex.Random();
+    pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
+    bird = new Bird(this);
+    ground!: Ground;
+
+    onInitialize(engine: ex.Engine): void {
+        ...
+
+        this.pipeFactory.start();
+    }
+}
+
+```
+
+
+### Step 9 - Scoring Points!
+
+Any good game needs points, so let's add some!
+
+First we'll add a score label to our `Level` to keep track of the current score for us. Additionally we'll add an `incrementScore()` to up the value.
+
