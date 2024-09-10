@@ -11,7 +11,6 @@ export class Pipe extends ex.Actor {
             height: 1000,
             anchor: type === 'bottom' ? ex.vec(0, 0) : ex.vec(0, 1),
             color: ex.Color.Green,
-            collisionType: ex.CollisionType.Fixed,
             vel: ex.vec(-Config.PipeSpeed, 0)
         })
 
