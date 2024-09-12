@@ -1,10 +1,5 @@
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: black;
-  }
-}
-
 html, body {
+  background-color: black;
   margin: 0;
   padding: 0;
   height: 100%;
