@@ -350,7 +350,6 @@ It is often useful to stash common logic for your game in a scene, for example r
 
 ```typescript
 // level.ts
-
 export class Level extends ex.Scene {
     bird: Bird = new Bird();
     ground!: Ground;
@@ -367,6 +366,20 @@ export class Level extends ex.Scene {
         game.add(bottomPipe);
     }
 }
+```
+
+Now in our `main.ts` we register the scene and go to the named scene after we start
+
+```typescript
+// main.ts
+const game = new ex.Engine({
+  ...
+  scenes: { Level: Level }
+});
+...
+game.start().then(() => {
+  game.goToScene('Level');
+});
 ```
 
 ### Step 7 - Refactor to Config Constants
@@ -487,7 +500,6 @@ With this new `PipeFactory` we'll add it to our `Level` with a new `ex.Random`. 
 
 ```typescript
 // level.ts
-
 export class Level extends ex.Scene {
     random = new ex.Random();
     pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
@@ -500,7 +512,6 @@ export class Level extends ex.Scene {
         this.pipeFactory.start();
     }
 }
-
 ```
 
 
@@ -508,5 +519,454 @@ export class Level extends ex.Scene {
 
 Any good game needs points, so let's add some!
 
-First we'll add a score label to our `Level` to keep track of the current score for us. Additionally we'll add an `incrementScore()` to up the value.
+First we'll add a score label and best score to our `Level` to keep track of the current score for us. Additionally we'll add an `incrementScore()` to up the value. We can use the browser's `localStorage` feature to keep track of our best score.
+
+```typescript
+// level.ts
+export class Level extends ex.Scene {
+    ...
+    score: number = 0;
+    best: number = 0;
+    scoreLabel = new ex.Label({
+        text: 'Score: 0',
+        x: 0,
+        y: 0,
+        z: 1,
+        font: new ex.Font({
+            size: 20,
+            color: ex.Color.White
+        })
+    });
+
+    bestLabel = new ex.Label({
+        text: 'Best: 0',
+        x: 400,
+        y: 0,
+        z: 1,
+        font: new ex.Font({
+            size: 20,
+            color: ex.Color.White,
+            textAlign: ex.TextAlign.End
+        })
+    });
+
+    onInitialize(engine: ex.Engine): void {
+        ...
+
+        this.add(this.scoreLabel);
+        this.add(this.bestLabel);
+
+        const bestScore = localStorage.getItem('bestScore');
+        if (bestScore) {
+            this.best = +bestScore;
+            this.setBestScore(this.best);
+        } else {
+            this.setBestScore(0);
+        }
+    }
+
+    incrementScore() {
+        this.scoreLabel.text = `Score: ${++this.score}`;
+        this.setBestScore(this.score);
+    }
+
+    setBestScore(score: number) {
+        if (score > this.best) {
+            localStorage.setItem('bestScore', this.score.toString());
+            this.best = score;
+        }
+        this.bestLabel.text = `Best: ${this.best}`;
+    }
+}
+```
+
+When our `Bird` flies between two pipes we want to increment the score. To do this will create a new file `score-trigger.ts` to detect this.
+
+```typescript
+// score-trigger.ts
+export class ScoreTrigger extends ex.Actor {
+    constructor(pos: ex.Vector, private level: Level) {
+        super({
+            pos,
+            width: 32,
+            height: Config.PipeGap,
+            anchor: ex.vec(0, 0),
+            vel: ex.vec(-Config.PipeSpeed, 0)
+        })
+
+        this.on('exitviewport', () => {
+            this.kill();
+        });
+    }
+
+    override onCollisionStart(): void {
+        this.level.incrementScore();
+    }
+}
+```
+
+Now in our pipe factory we put these triggers in between our pipes, and add `ScoreTrigger` to our `reset()` and `stop()` routines
+
+
+```typescript
+// pipe-factory.ts
+
+export class PipeFactory {
+    ...
+
+    spawnPipes() {
+        ...
+
+        const scoreTrigger = new ScoreTrigger(
+            ex.vec(
+                this.level.engine.screen.drawWidth,
+                randomPipePosition),
+            this.level
+        );
+        this.level.add(scoreTrigger);
+
+    }
+
+    ...
+    reset() {
+        for (const actor of this.level.actors) {
+            if (actor instanceof Pipe ||
+                actor instanceof ScoreTrigger
+            ) {
+                actor.kill();
+            }
+        }
+    }
+
+    stop() {
+        this.timer.stop();
+        for (const actor of this.level.actors) {
+            if (actor instanceof Pipe ||
+                actor instanceof ScoreTrigger
+            ) {
+                actor.vel = ex.vec(0, 0);
+            }
+        }
+    }
+}
+```
+
+### Step 10 - Game Over
+
+For our game, when the bird collides with the ground, pipe, or goes offscreen we want to trigger a game over. To accomplish this we'll setup a `start()`, `stop()` and `reset()` on the various components of our game so that we can "freeze" things in place on a game over.
+
+We implement a `showStartInstructions()` method that shows our start game label and starts the game as soon as a pointer is tapped.
+
+We'll show the start instructions at the beginning and on a game over.
+
+
+```typescript
+// level.ts
+export class Level extends ex.Scene {
+    ...
+
+    startGameLabel = new ex.Label({
+        text: 'Tap to Start',
+        x: 200,
+        y: 200,
+        z: 2,
+        font: new ex.Font({
+            size: 30,
+            color: ex.Color.White,
+            textAlign: ex.TextAlign.Center
+        })
+    });
+
+    override onInitialize(engine: ex.Engine): void {
+        ...
+        this.showStartInstructions();
+    }
+
+    showStartInstructions() {
+        this.startGameLabel.graphics.visible = true;
+        this.engine.input.pointers.once('down', () => {
+            this.reset();
+
+            this.startGameLabel.graphics.visible = false;
+            this.bird.start();
+            this.pipeFactory.start();
+            this.ground.start();
+        });
+    }
+
+    reset() {
+        this.bird.reset();
+        this.pipeFactory.reset();
+        this.score = 0;
+        this.scoreLabel.text = `Score: ${this.score}`;
+    }
+
+    triggerGameOver() {
+        this.pipeFactory.stop();
+        this.bird.stop();
+        this.ground.stop();
+        this.showStartInstructions();
+    }
+}
+```
+
+In our `Bird` we want to trigger this game over when it leaves the screen and when it collides with a `Pipe` or the `Ground`
+
+```typescript
+// bird.ts
+export class Bird extends ex.Actor {
+    playing = false;
+    ...
+
+    override onInitialize(): void {
+        ...
+        this.on('exitviewport', () => {
+            this.level.triggerGameOver();
+        });
+    }
+
+    override onPostUpdate(engine: ex.Engine): void {
+        if (!this.playing) return;
+        ...
+    }
+
+    start() {
+        this.playing = true;
+        this.pos = Config.BirdStartPos; // starting position
+        this.acc = ex.vec(0, Config.BirdAcceleration); // pixels per second per second
+    }
+
+    reset() {
+        this.pos = Config.BirdStartPos; // starting position
+        this.stop();
+    }
+
+    stop() {
+        this.playing = false;
+        this.vel = ex.vec(0, 0);
+        this.acc = ex.vec(0, 0);
+    }
+
+    override onCollisionStart(_self: ex.Collider, other: ex.Collider): void {
+        if (other.owner instanceof Pipe ||
+            other.owner instanceof Ground
+        ) {
+            this.level.triggerGameOver();
+        }
+    }
+}
+
+```
+
+### Step 11 - Graphics 
+
+It would be nice to have some graphics for our `Bird` actor, we can load images to use in in actors using the `ex.ImageSource` and a `ex.Loader`. The loader will show a loading bar while our images and other resources are loading. Generally we do this in a new `resources.ts` file.
+
+1. We export the Resources `as const` so you get strong typing for each key of the dictionary, `as const` tells typescript that the keys wont change at runtime
+2. Another useful convention that we use is defining the loader next to the Resources and exporting to be used in `main.ts`
+3. Note: in vite to serve static files we use the `public` folder
+
+
+```typescript
+// resources.ts
+export const Resources = {
+    // Relative to /public in vite
+    BirdImage: new ex.ImageSource('./images/bird.png')
+} as const;
+```
+
+Now we can load this before starting the game
+
+```typescript
+// main.ts
+...
+const loader = new ex.Loader(Object.values(Resources));
+game.start(loader).then(() => {
+  game.goToScene('Level');
+});
+```
+
+### Step 11 - Bird Graphics
+
+We have a lovely Excalibur themed bird we created especially for this sample, feel free to use and remix. You'll notice that we have a sprite sheet for various frames.
+
+<img src="./public/images/bird.png" width="300px" style="image-rendering: pixelated; border: solid;" alt="pixel art bird graphic">
+
+
+To slice this up into animations we can use `ex.SpriteSheet` and `ex.Animation`. Animations can have a particular `ex.AnimationStrategy`
+* Freeze - stops on the last frame
+* Loop - starts from the beginning again after the last frame
+* PingPong - plays to the last frame, then in reverse, and so on
+* End - after the last frame nothing is drawn
+
+```typescript
+
+// Slice up image into a sprite sheet
+const spriteSheet = ex.SpriteSheet.fromImageSource({
+    image: Resources.BirdImage,
+    grid: {
+        rows: 1,
+        columns: 4,
+        spriteWidth: 32,
+        spriteHeight: 32,
+    }
+});
+
+// Animation to play going up on tap
+this.upAnimation = ex.Animation.fromSpriteSheet(
+    spriteSheet,
+    [2, 1, 0], // 3rd frame, then 2nd, then first
+    150, // 150ms for each frame
+    ex.AnimationStrategy.Freeze);
+
+// Animation to play going down
+this.downAnimation = ex.Animation.fromSpriteSheet(
+    spriteSheet,
+    [0, 1, 2],
+    150,
+    ex.AnimationStrategy.Freeze);
+
+// Register animations by name
+this.graphics.add('down', this.downAnimation);
+this.graphics.add('up', this.upAnimation);
+```
+
+You can also pull single frames out of a `SpriteSheet` as a `Sprite`
+
+```typescript
+this.startSprite = spriteSheet.getSprite(1, 0);
+...
+this.graphics.add('start', this.startSprite);
+
+this.graphics.use('start');
+```
+
+### Step 12 - Pipe Graphics
+
+We also created a pipe especially for this sample, feel free to use and remix.
+
+<img src="./public/images/pipe.png" width="300px" style="image-rendering: pixelated; border: solid;" alt="pixel art pipe graphic">
+
+We can take advantage of `ex.ImageWrapping.Clamp` to stretch the bottom pixel of the pipe so it can be as long as we want.
+
+```typescript
+// resources.ts
+export const Resources = {
+    // Relative to /public in vite
+    ...
+    PipeImage: new ex.ImageSource('./images/pipe.png', {
+        wrapping: ex.ImageWrapping.Clamp
+    }),
+    ...
+} as const;
+```
+
+In our `pipe.ts` we can add our pipe graphic and stretch it by changing the `sourceView` and `destSize`. 
+
+The `sourceView` is the "window" into the original image, and since we are specifying a view larger than the original image, that `ex.ImageWrap.Clamp` will stretch the board pixel to accommodate. 
+
+Changing the `destSize` changes the size of the final rendered sprite, in this case we want the same height.
+
+```typescript
+// pipe.ts
+export class Pipe extends ex.Actor {
+    ...
+
+    override onInitialize(): void {
+        const pipeEnd = Resources.PipeImage.toSprite();
+        // Stretch the pipe sprite
+        // by default ImageSource use clamp which re-uses the border pixels 
+        // when sourceView is larger than the original image
+        pipeEnd.sourceView.height = 1000;
+        // 
+        pipeEnd.destSize.height = 1000;
+
+        // Flip the pipe sprite
+        if (this.type === 'top') {
+            pipeEnd.flipVertical = true;
+        }
+        this.graphics.use(pipeEnd);
+    }
+}
+```
+
+### Step 13 - Ground Graphics
+
+Finally the ground graphics, feel free to use and remix.
+
+<img src="./public/images/ground.png" width="300px" style="image-rendering: pixelated; border: solid;" alt="pixel art ground graphic">
+
+We want the ground to tile and repeat horizontally we can take advantage of the `ex.ImageWrapping.Repeat` to accomplish this
+
+```typescript
+// resources.ts
+export const Resources = {
+    // Relative to /public in vite
+    GroundImage: new ex.ImageSource('./images/ground.png', {
+        wrapping: ex.ImageWrapping.Repeat
+    })
+} as const;
+```
+
+When the `ex.ImageWrapping.Repeat` mode is set, specifying a bigger `sourceView` than the original image has a tiling effect, the original image gets repeated over and over.
+
+```typescript
+// ground.ts
+    onInitialize(engine: ex.Engine): void {
+        this.groundSprite.sourceView.width = engine.screen.drawWidth;
+        this.groundSprite.destSize.width = engine.screen.drawWidth;
+        this.graphics.use(this.groundSprite);
+    }
+```
+
+To make the ground appear scroll to the left, we can do a nifty trick to move the `sourceView.x` by the speed of our `Pipe`
+
+```typescript
+    onPostUpdate(_engine: ex.Engine, elapsedMs: number): void {
+        if (!this.moving) return;
+        this.groundSprite.sourceView.x += Config.PipeSpeed * (elapsedMs / 1000);
+        this.groundSprite.sourceView.x = this.groundSprite.sourceView.x % Resources.GroundImage.width;
+    }
+```
+
+Putting it all together
+
+```typescript
+// ground.ts
+export class Ground extends ex.Actor {
+    groundSprite = Resources.GroundImage.toSprite();
+    moving = false;
+    constructor(pos: ex.Vector) {
+        super({
+            pos,
+            anchor: ex.vec(0, 0),
+            height: 64,
+            width: 400,
+            z: 1
+        })
+    }
+
+    onInitialize(engine: ex.Engine): void {
+        this.groundSprite.sourceView.width = engine.screen.drawWidth;
+        this.groundSprite.destSize.width = engine.screen.drawWidth;
+        this.graphics.use(this.groundSprite);
+    }
+
+    onPostUpdate(_engine: ex.Engine, elapsedMs: number): void {
+        if (!this.moving) return;
+        this.groundSprite.sourceView.x += Config.PipeSpeed * (elapsedMs / 1000);
+        this.groundSprite.sourceView.x = this.groundSprite.sourceView.x % Resources.GroundImage.width;
+    }
+
+    start() {
+        this.moving = true;
+    }
+
+    stop() {
+        this.moving = false;
+    }
+}
+```
+
+### Step 14 - Flappy Sounds and Music
 
