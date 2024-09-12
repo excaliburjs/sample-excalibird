@@ -2,7 +2,6 @@ import * as ex from "excalibur";
 import { Config } from "./config";
 import { Resources } from "./resources";
 
-// Step 9
 export class Pipe extends ex.Actor {
     constructor(pos: ex.Vector, public type: 'top' | 'bottom') {
         super({
@@ -18,7 +17,6 @@ export class Pipe extends ex.Actor {
         this.on('exitviewport', () => this.kill());
     }
 
-    // Step 9.5
     override onInitialize(): void {
         const pipeEnd = Resources.PipeImage.toSprite();
         // Stretch the pipe sprite

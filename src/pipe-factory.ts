@@ -4,7 +4,6 @@ import { Config } from "./config";
 import { Level } from "./level";
 import { ScoreTrigger } from "./score-trigger";
 
-// Step 9
 export class PipeFactory {
 
     private timer: ex.Timer;

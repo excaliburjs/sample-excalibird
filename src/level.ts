@@ -4,7 +4,6 @@ import { PipeFactory } from "./pipe-factory";
 import { Config } from "./config";
 import { Ground } from "./ground";
 
-// Step 7
 export class Level extends ex.Scene {
     score: number = 0;
     best: number = 0;
@@ -17,7 +16,7 @@ export class Level extends ex.Scene {
         text: 'Tap to Start',
         x: 200,
         y: 200,
-        z: 10,
+        z: 2,
         font: new ex.Font({
             size: 30,
             color: ex.Color.White,
@@ -29,7 +28,7 @@ export class Level extends ex.Scene {
         text: 'Score: 0',
         x: 0,
         y: 0,
-        z: 10,
+        z: 2,
         font: new ex.Font({
             size: 20,
             color: ex.Color.White
@@ -40,7 +39,7 @@ export class Level extends ex.Scene {
         text: 'Best: 0',
         x: 400,
         y: 0,
-        z: 10,
+        z: 2,
         font: new ex.Font({
             size: 20,
             color: ex.Color.White,
@@ -48,10 +47,9 @@ export class Level extends ex.Scene {
         })
     });
 
-    onInitialize(engine: ex.Engine): void {
+    override onInitialize(engine: ex.Engine): void {
         this.add(this.bird);
 
-        // Step 8
         this.add(this.startGameLabel);
         this.add(this.scoreLabel);
         this.add(this.bestLabel);
@@ -67,7 +65,6 @@ export class Level extends ex.Scene {
             this.setBestScore(0);
         }
 
-        // Step 9
         this.showStartInstructions();
     }
     incrementScore() {
@@ -86,7 +83,7 @@ export class Level extends ex.Scene {
     showStartInstructions() {
         this.startGameLabel.graphics.visible = true;
         this.engine.input.pointers.once('down', () => {
-            this.resetLevel();
+            this.reset();
 
             this.startGameLabel.graphics.visible = false;
             this.bird.start();
@@ -95,7 +92,7 @@ export class Level extends ex.Scene {
         });
     }
 
-    resetLevel() {
+    reset() {
         this.bird.reset();
         this.pipeFactory.reset();
         this.score = 0;

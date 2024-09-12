@@ -5,10 +5,12 @@ import { Level } from "./level";
 import { Pipe } from "./pipe";
 import { Ground } from "./ground";
 
-// Step 2
 export class Bird extends ex.Actor {
     playing = false;
     jumping = false;
+    startSprite!: ex.Sprite;
+    upAnimation!: ex.Animation;
+    downAnimation!: ex.Animation;
     constructor(private level: Level) {
         super({
             pos: Config.BirdStartPos,
@@ -18,15 +20,28 @@ export class Bird extends ex.Actor {
         });
     }
 
-    // Step 3
     override onInitialize(): void {
-        // this.acc = ex.vec(0, 1500); // pixels per second per second
+        const spriteSheet = ex.SpriteSheet.fromImageSource({
+            image: Resources.BirdImage,
+            grid: {
+                rows: 1,
+                columns: 4,
+                spriteWidth: 32,
+                spriteHeight: 32,
+            }
+        });
 
-        // Step 6
-        const sprite = Resources.BirdImage.toSprite();
-        this.graphics.use(sprite);
+        this.startSprite = spriteSheet.getSprite(1, 0);
+        this.upAnimation = ex.Animation.fromSpriteSheet(spriteSheet, [2, 1, 0], 150, ex.AnimationStrategy.Freeze);
+        this.downAnimation = ex.Animation.fromSpriteSheet(spriteSheet, [0, 1, 2], 150, ex.AnimationStrategy.Freeze);
+        
+        // Register
+        this.graphics.add('down', this.downAnimation);
+        this.graphics.add('up', this.upAnimation);
+        this.graphics.add('start', this.startSprite);
 
-        // Step 9
+        this.graphics.use('start');
+
         this.on('exitviewport', () => {
             this.level.triggerGameOver();
         });
@@ -37,7 +52,6 @@ export class Bird extends ex.Actor {
                 engine.input.pointers.isDown(0))
     }
 
-    // Step 4
     override onPostUpdate(engine: ex.Engine): void {
         if (!this.playing) return;
 
@@ -45,6 +59,10 @@ export class Bird extends ex.Actor {
         if (!this.jumping && this.isInputActive(engine)) {
             this.vel.y += Config.BirdJumpVelocity;
             this.jumping = true;
+            this.graphics.use('up');
+            // rewind
+            this.upAnimation.reset();
+            this.downAnimation.reset();
         }
 
         if (!this.isInputActive(engine)) {
@@ -55,16 +73,18 @@ export class Bird extends ex.Actor {
 
         // The "speed" the bird will move relative to pipes
         this.rotation = ex.vec(Config.PipeSpeed, this.vel.y).toAngle();
+
+        if (this.vel.y > 0) {
+            this.graphics.use('down');
+        }
     }
 
-    // Step 8
     start() {
         this.playing = true;
         this.pos = Config.BirdStartPos; // starting position
         this.acc = ex.vec(0, Config.BirdAcceleration); // pixels per second per second
     }
 
-    // Step 8
     reset() {
         this.pos = Config.BirdStartPos; // starting position
         this.stop();
@@ -76,7 +96,6 @@ export class Bird extends ex.Actor {
         this.acc = ex.vec(0, 0);
     }
 
-    // Step 9
     override onCollisionStart(_self: ex.Collider, other: ex.Collider): void {
         if (other.owner instanceof Pipe ||
             other.owner instanceof Ground
