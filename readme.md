@@ -970,3 +970,19 @@ export class Ground extends ex.Actor {
 
 ### Step 14 - Flappy Sounds and Music
 
+Finally to really add depth to a game let's add some sound! `ex.Sound` needs to be loaded much like `ex.ImageSource`.
+
+Excalibur supports any audio your browser supports, you can specify an ordered list of files to fallback to if a browser doesn't support.
+
+```typescript
+export const Resources = {
+    // Relative to /public in vite
+    ...
+    // Sounds
+    FlapSound: new ex.Sound('./sounds/flap.wav'),
+    FailSound: new ex.Sound('./sounds/fail.wav'),
+    ScoreSound: new ex.Sound('./sounds/score.wav'),
+} as const;
+```
+
+
