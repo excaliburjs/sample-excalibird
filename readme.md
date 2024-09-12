@@ -786,7 +786,7 @@ game.start(loader).then(() => {
 });
 ```
 
-### Step 11 - Bird Graphics
+### Step 12 - Bird Graphics
 
 We have a lovely Excalibur themed bird we created especially for this sample, feel free to use and remix. You'll notice that we have a sprite sheet for various frames.
 
@@ -841,7 +841,7 @@ this.graphics.add('start', this.startSprite);
 this.graphics.use('start');
 ```
 
-### Step 12 - Pipe Graphics
+### Step 13 - Pipe Graphics
 
 We also created a pipe especially for this sample, feel free to use and remix.
 
@@ -890,7 +890,7 @@ export class Pipe extends ex.Actor {
 }
 ```
 
-### Step 13 - Ground Graphics
+### Step 14 - Ground Graphics
 
 Finally the ground graphics, feel free to use and remix.
 
@@ -968,7 +968,7 @@ export class Ground extends ex.Actor {
 }
 ```
 
-### Step 14 - Flappy Sounds and Music
+### Step 15 - Flappy Sounds and Music
 
 Finally to really add depth to a game let's add some sound! `ex.Sound` needs to be loaded much like `ex.ImageSource`.
 
