@@ -106,6 +106,30 @@ game.start();
 
 At this point the screen will just be a solid color we picked as our `backgroundColor`.
 
+We can add some css to our game to center it on the screen
+
+```css
+html,
+body {
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+```
+
+Then include this in your `index.html` in the `<head>` section
+
+```html
+<link rel="stylesheet" href="./src/style.css">
+```
+
 ### Step 2 - Adding a Bird Actor
 
 Next let's making our first Actor for the Bird and `.add()` it to the default Excalibur Scene which can be accessed off the `Engine`. 
@@ -123,12 +147,14 @@ First create a new file `bird.ts`
 import * as ex from "excalibur";
 
 export class Bird extends ex.Actor {
-    constructor({
-        pos: ex.vec(200, 300),
-        width: 16,
-        height: 16
-        color: ex.Color.Yellow
-    })
+    constructor() {
+        super({
+            pos: ex.vec(200, 300),
+            width: 16,
+            height: 16
+            color: ex.Color.Yellow
+        })
+    }
 }
 ```
 
