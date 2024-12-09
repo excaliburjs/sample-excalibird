@@ -67,7 +67,7 @@ Create an `index.html` and a `main.ts`, with `vite` you can directly include a r
 
 ### Step 1 - Start Your Engines
 
-First in `main.ts` we can import all of Excalibur as `ex`, this makes it clear in this example what types are coming from Excalibur.
+First in `main.ts` we can import all of Excalibur as `ex`, **this makes it clear in this example what types are coming from Excalibur.**
 
 ```typescript
 // main.ts
@@ -91,7 +91,7 @@ We can start by creating our `ex.Engine`, which will be the container for our ga
 
 ```typescript
 // main.ts
-import { Engine } from 'excalibur'
+import * as ex from 'excalibur';
 
 const game = new ex.Engine({
   width: 400,
@@ -151,7 +151,7 @@ export class Bird extends ex.Actor {
         super({
             pos: ex.vec(200, 300),
             width: 16,
-            height: 16
+            height: 16,
             color: ex.Color.Yellow
         })
     }
@@ -162,6 +162,10 @@ Then we add it to our default scene.
 
 ```typescript
 // main.ts 
+import * as ex from 'excalibur';
+
+import { Bird } from './bird';
+
 const game = new ex.Engine({...});
 
 const bird = new Bird();
@@ -190,7 +194,7 @@ export class Ground extends ex.Actor {
             anchor: ex.vec(0, 0),
             height: 64,
             width: 400,
-            color: ex.Color.fromHex('#bd9853')
+            color: ex.Color.fromHex('#bd9853'),
             z: 1 // position the ground above everything
         })
     }
@@ -204,6 +208,8 @@ We can make our `Bird` move by giving it some acceleration in `onInitialize`, it
 
 ```typescript
 // bird.ts
+import * as ex from 'excalibur';
+
 export class Bird extends ex.Actor {
     ...
     override onInitialize(): void {
@@ -216,6 +222,9 @@ Now we want to collide with the `Ground`.
 
 ```typescript
 // bird.ts
+import * as ex from 'excalibur';
+import { Ground } from './ground';
+
 export class Bird extends ex.Actor {
     ...
 
@@ -236,13 +245,17 @@ Let's put our `Bird` and `Ground` together in the default `Scene`
 
 ```typescript
 // main.ts
+import * as ex from 'excalibur';
+import { Bird } from './bird';
+import { Ground } from './ground';
+
 const game = new ex.Engine({...});
 
 const bird = new Bird();
 game.add(bird);
 
 // drawHeight is the height of the visible drawing surface in game pixels
-const ground = new Ground(ex.vec(0, engine.screen.drawHeight - 64));
+const ground = new Ground(ex.vec(0, game.screen.drawHeight - 64));
 game.add(ground);
 
 game.start();
@@ -259,6 +272,8 @@ For added flair, we can adjust the `Bird`'s rotation by the speed that the level
 
 ```typescript
 // bird.ts
+import * as ex from 'excalibur';
+
 export class Bird extends ex.Actor {
 
     ...
@@ -304,6 +319,9 @@ Notice that the `Pipe` will be moving to the left 200 pixels per second relative
 Then once offscreen we clean up after ourselves and remove the pipe with `.kill()`
 
 ```typescript
+// pipe.ts
+import * as ex from 'excalibur';
+
 export class Pipe extends ex.Actor {
     constructor(pos: ex.Vector, public type: 'top' | 'bottom') {
         super({
@@ -327,6 +345,10 @@ To make the `Bird` "collide" with our pipes we need to adjust our `onCollisionSt
 
 ```typescript
 // bird.ts
+import * as ex from 'excalibur';
+import { Ground } from './ground';
+import { Pipe } from './pipe';
+
 export class Bird extends ex.Actor {
     
     ...
@@ -348,6 +370,11 @@ Let's add the `Pipe` into the default scene to test it out.
 
 ```typescript
 // main.ts
+import * as ex from 'excalibur';
+import { Bird } from './bird';
+import { Ground } from './ground';
+import { Pipe } from './pipe';
+
 const game = new ex.Engine({...});
 
 const bird = new Bird();
@@ -357,10 +384,10 @@ game.add(bird);
 const ground = new Ground(ex.vec(0, engine.screen.drawHeight - 64));
 game.add(ground);
 
-const topPipe = new Pipe(ex.vec(this.level.engine.screen.drawWidth, 150), 'top');
+const topPipe = new Pipe(ex.vec(game.screen.drawWidth, 150), 'top');
 game.add(topPipe);
 
-const bottomPipe = new Pipe(ex.vec(this.level.engine.screen.drawWidth, 300), 'bottom');
+const bottomPipe = new Pipe(ex.vec(game.screen.drawWidth, 300), 'bottom');
 game.add(bottomPipe);
 
 game.start();
@@ -376,6 +403,11 @@ It is often useful to stash common logic for your game in a scene, for example r
 
 ```typescript
 // level.ts
+import * as ex from 'excalibur';
+import { Bird } from './bird';
+import { Ground } from './ground';
+import { Pipe } from './pipe';
+
 export class Level extends ex.Scene {
     bird: Bird = new Bird();
     ground!: Ground;
@@ -398,6 +430,9 @@ Now in our `main.ts` we register the scene and go to the named scene after we st
 
 ```typescript
 // main.ts
+import * as ex from 'excalibur';
+import { Level } from './level';
+
 const game = new ex.Engine({
   ...
   scenes: { Level: Level }
@@ -416,6 +451,7 @@ We go through and move all our numbers into this file.
 
 ```typescript
 // config.ts
+import * as ex from 'excalibur';
 
 export const Config = {
     BirdStartPos: ex.vec(200, 300),
@@ -439,12 +475,15 @@ We want pipe to appear after a certain amount of time and for them to be in rand
 `ex.Timer`'s can be created and configured to `repeats:` infinitely at a certain `interval:`, and call a callback `fcn:`.
 
 ```typescript
+import * as ex from 'excalibur';
+
+// we'll use this timer below
 this.timer = new ex.Timer({
     interval: intervalMs,
     repeats: true,
-    fcn: () => this.spawnPipes()
+    action: () => this.spawnPipes()
 });
-// MUST BE added to a scene to work
+// MUST BE added to a scene to work!!
 this.level.add(this.timer);
 
 ```
@@ -460,6 +499,11 @@ We can `.start()`, `.stop()` the pipe factory and all the `Pipe`s created at the
 
 ```typescript
 // pipe-factory.ts
+import * as ex from 'excalibur';
+import { Bird } from './bird';
+import { Ground } from './ground';
+import { Pipe } from './pipe';
+
 export class PipeFactory {
 
     private timer: ex.Timer;
@@ -467,28 +511,20 @@ export class PipeFactory {
         private level: Level,
         private random: ex.Random,
         intervalMs: number) {
-
             this.timer = new ex.Timer({
                 interval: intervalMs,
                 repeats: true,
-                fcn: () => this.spawnPipes()
+                action: () => this.spawnPipes()
             });
-
             this.level.add(this.timer);
     }
 
     spawnPipes() {
-        const randomPipePosition = this.random.floating(0, this.level.engine.screen.drawWidth - Config.PipeGap);
+        const randomPipePosition = this.random.floating(0, this.level.engine.screen.resolution.height - Config.PipeGap);
 
         const bottomPipe = new Pipe(
             ex.vec(this.level.engine.screen.drawWidth, randomPipePosition + Config.PipeGap),
-            'bottom'export class Level extends ex.Scene {
-    score: number = 0;
-    best: number = 0;
-    random = new ex.Random();
-    pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
-    bird = new Bird(this);
-    ground!: Ground;
+            'bottom'
         );
         this.level.add(bottomPipe);
 
@@ -526,6 +562,9 @@ With this new `PipeFactory` we'll add it to our `Level` with a new `ex.Random`. 
 
 ```typescript
 // level.ts
+
+import { PipeFactory } from './pipe-factory';
+
 export class Level extends ex.Scene {
     random = new ex.Random();
     pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
@@ -784,7 +823,7 @@ export class Bird extends ex.Actor {
 
 ```
 
-### Step 11 - Graphics 
+### Step 11 - Graphics
 
 It would be nice to have some graphics for our `Bird` actor, we can load images to use in in actors using the `ex.ImageSource` and a `ex.Loader`. The loader will show a loading bar while our images and other resources are loading. Generally we do this in a new `resources.ts` file.
 
