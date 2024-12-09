@@ -87,7 +87,8 @@ We can start by creating our `ex.Engine`, which will be the container for our ga
 3. There are different `ex.DisplayMode`'s, If you want to fit the width and height to the screen and keep aspect ratio, use `ex.DisplayMode.FitScreen`
 4. If you want to avoid the letter boxing you can use `ex.DisplayMode.FitScreenAndFill`, only the configured width and height are safe to draw in but outside of that is not guaranteed.
 5. In this sample we are using pixel art, so setting `pixelArt: true` will provide the best defaults for that.
-5. Call `.start()` to start the game
+6. `pixelRatio: 2` will "scale up` the canvas to give us more crisp look at lower resolutions.
+7. Call `.start()` to start the game
 
 ```typescript
 // main.ts
@@ -98,6 +99,7 @@ const game = new ex.Engine({
   height: 500,
   backgroundColor: ex.Color.fromHex("#54C0CA"),
   pixelArt: true,
+  pixelRatio: 2,
   displayMode: ex.DisplayMode.FitScreen
 });
 

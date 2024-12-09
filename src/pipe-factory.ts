@@ -14,7 +14,7 @@ export class PipeFactory {
             this.timer = new ex.Timer({
                 interval: intervalMs,
                 repeats: true,
-                fcn: () => this.spawnPipes()
+                action: () => this.spawnPipes()
             });
             this.level.add(this.timer);
     }

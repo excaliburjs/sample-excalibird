@@ -7,6 +7,7 @@ const game = new ex.Engine({
   height: 500,
   backgroundColor: ex.Color.fromHex("#54C0CA"),
   pixelArt: true,
+  pixelRatio: 2,
   displayMode: ex.DisplayMode.FitScreen,
   scenes: { Level }
 });
