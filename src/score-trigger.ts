@@ -1,6 +1,7 @@
 import * as ex from "excalibur";
 import { Level } from "./level";
 import { Config } from "./config";
+import { Resources } from "./resources";
 
 
 export class ScoreTrigger extends ex.Actor {
@@ -21,5 +22,6 @@ export class ScoreTrigger extends ex.Actor {
 
     override onCollisionStart(): void {
         this.level.incrementScore();
+        Resources.ScoreSound.play();
     }
 }

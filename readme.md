@@ -1049,7 +1049,58 @@ export const Resources = {
     FlapSound: new ex.Sound('./sounds/flap.wav'),
     FailSound: new ex.Sound('./sounds/fail.wav'),
     ScoreSound: new ex.Sound('./sounds/score.wav'),
+
+    // Music
+    BackgroundMusic: new ex.Sound('./sounds/two_left_socks.ogg')
 } as const;
 ```
 
 
+You can leverage the scene lifecycle in `level.ts` with `onActivate()` to start some looping background music.
+
+```typescript
+// level.ts
+export class Level extends ex.Scene {
+    ...
+    override onActivate(): void {
+        Resources.BackgroundMusic.loop = true;
+        Resources.BackgroundMusic.play();
+    }
+    ...
+}
+```
+
+We also want a "flap" sound effect every time the bird flaps it's wings.
+
+```typescript
+// bird.ts
+export class Bird extends ex.Actor {
+    ...
+    override onPostUpdate(engine: ex.Engine): void {
+        if (!this.playing) return;
+
+        // if the space bar or the first pointer was down
+        if (!this.jumping && this.isInputActive(engine)) {
+            ...
+            // play sound effect
+            Resources.FlapSound.play();
+        }
+    }
+}
+
+```
+
+The user needs some rewarding sound when they score points, let's add that to our score trigger.
+
+```typescript
+// score-trigger.ts
+
+export class ScoreTrigger extends ex.Actor {
+    ...
+    override onCollisionStart(): void {
+        ...
+        Resources.ScoreSound.play();
+    }
+}
+
+```

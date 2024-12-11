@@ -3,6 +3,7 @@ import { Bird } from "./bird";
 import { PipeFactory } from "./pipe-factory";
 import { Config } from "./config";
 import { Ground } from "./ground";
+import { Resources } from "./resources";
 
 export class Level extends ex.Scene {
     score: number = 0;
@@ -47,6 +48,11 @@ export class Level extends ex.Scene {
         })
     });
 
+    override onActivate(): void {
+        Resources.BackgroundMusic.loop = true;
+        Resources.BackgroundMusic.play();
+    }
+
     override onInitialize(engine: ex.Engine): void {
         this.add(this.bird);
 
@@ -81,11 +87,11 @@ export class Level extends ex.Scene {
     }
 
     showStartInstructions() {
-        this.startGameLabel.graphics.visible = true;
+        this.startGameLabel.graphics.isVisible = true;
         this.engine.input.pointers.once('down', () => {
             this.reset();
 
-            this.startGameLabel.graphics.visible = false;
+            this.startGameLabel.graphics.isVisible = false;
             this.bird.start();
             this.pipeFactory.start();
             this.ground.start();
@@ -104,5 +110,6 @@ export class Level extends ex.Scene {
         this.bird.stop();
         this.ground.stop();
         this.showStartInstructions();
+        Resources.FailSound.play();
     }
 }

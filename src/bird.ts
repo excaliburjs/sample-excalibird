@@ -14,8 +14,10 @@ export class Bird extends ex.Actor {
     constructor(private level: Level) {
         super({
             pos: Config.BirdStartPos,
-            width: 16,
-            height: 16,
+            radius: 8,
+            // rotating box double counts
+            // width: 16,
+            // height: 16,
             color: ex.Color.Yellow
         });
     }
@@ -63,6 +65,8 @@ export class Bird extends ex.Actor {
             // rewind
             this.upAnimation.reset();
             this.downAnimation.reset();
+            // play sound effect
+            Resources.FlapSound.play();
         }
 
         if (!this.isInputActive(engine)) {
