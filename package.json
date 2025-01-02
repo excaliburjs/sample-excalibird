@@ -21,7 +21,7 @@
   "bugs": {},
   "homepage": "",
   "dependencies": {
-    "excalibur": "0.30.2"
+    "excalibur": "0.30.3"
   },
   "devDependencies": {
     "typescript": "5.7.2",
