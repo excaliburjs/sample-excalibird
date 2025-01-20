@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="./images/pipe.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#176BAA" />
-    <meta property="og:locale" content="en" />
-    <meta property="og:title" content="Excalibird | Excalibur Sample">
-    <meta property="og:description" content="High fidelity sample of a Flappy Bird style game">
-    <meta property="og:url" content="https://excaliburjs.com/sample-excalibird/" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://excaliburjs.com/sample-excalibird/images/social.jpg" />
-    <meta property="og:image" content="https://excaliburjs.com/sample-excalibird/images/social.jpg" />
-    <link rel="stylesheet" href="./src/style.css">
-    <title>Excalibird | Excalibur Sample</title>
-  </head>
-  <body>
-    <script type="module" src="./src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="./images/pipe.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#176BAA" />
+  <meta property="og:locale" content="en" />
+  <meta property="og:title" content="Excalibird | Excalibur Sample">
+  <meta property="og:description" content="High fidelity sample of a Flappy Bird style game">
+  <meta property="og:url" content="https://excaliburjs.com/sample-excalibird/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://excaliburjs.com/sample-excalibird/images/social.jpg" />
+  <meta property="og:image" content="https://excaliburjs.com/sample-excalibird/images/social.jpg" />
+  <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <title>Excalibird | Excalibur Sample</title>
+</head>
+
+<body>
+  <div class="ui">
+    <button id="mute" class="button-reset" aria-pressed="false" aria-label="Mute/Unmute">
+      <i class="material-icons unpressed">volume_up</i>
+      <i class="material-icons pressed">volume_off</i>
+    </button>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+
 </html>
