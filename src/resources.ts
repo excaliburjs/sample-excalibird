@@ -18,6 +18,6 @@ export const Resources = {
     ScoreSound: new ex.Sound('./sounds/score.wav'),
 
     // Music
-    BackgroundMusic: new ex.Sound('./sounds/two_left_socks.ogg')
+    BackgroundMusic: new ex.Sound('./sounds/two_left_socks.ogg', './sounds/two_left_socks.mp3')
 } as const;
 
