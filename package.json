@@ -21,10 +21,10 @@
   "bugs": {},
   "homepage": "",
   "dependencies": {
-    "excalibur": "0.30.3"
+    "excalibur": "0.32.0"
   },
   "devDependencies": {
-    "typescript": "5.7.2",
-    "vite": "6.0.6"
+    "typescript": "5.9.3",
+    "vite": "7.3.1"
   }
 }
