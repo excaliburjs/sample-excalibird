@@ -33,7 +33,7 @@ export class Ground extends ex.Actor {
   onPostUpdate(_engine: ex.Engine, elapsedMs: number): void {
     if (!this.moving) return;
     // scroll the tiled sprite to the right, clamp to the width to keep the uv's small preventing visual
-    // artifacts
+    // artifacts due to floating point
     this.groundSprite.sourceView.x += Config.PipeSpeed * (elapsedMs / 1000);
     this.groundSprite.sourceView.x = this.groundSprite.sourceView.x % Resources.GroundImage.width;
   }
