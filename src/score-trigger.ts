@@ -21,7 +21,7 @@ export class ScoreTrigger extends ex.Actor {
         });
     }
 
-    override onCollisionStart(self: ex.Collider, other: ex.Collider): void {
+    override onCollisionStart(_self: ex.Collider, other: ex.Collider): void {
         if (other.owner instanceof Bird) {
           this.level.incrementScore();
           Resources.ScoreSound.play();
