@@ -5,6 +5,7 @@ import { Resources } from "./resources";
 export class Pipe extends ex.Actor {
     constructor(pos: ex.Vector, public type: 'top' | 'bottom') {
         super({
+            name: "Pipe",
             pos,
             width: 32,
             height: 1000,

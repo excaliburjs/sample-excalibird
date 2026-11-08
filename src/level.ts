@@ -14,6 +14,7 @@ export class Level extends ex.Scene {
     ground!: Ground;
 
     startGameLabel = new ex.Label({
+        name: 'StartGameLabel',
         text: 'Tap to Start',
         x: 200,
         y: 200,
@@ -26,6 +27,7 @@ export class Level extends ex.Scene {
     });
 
     scoreLabel = new ex.Label({
+        name: 'ScoreLabel',
         text: 'Score: 0',
         x: 0,
         y: 0,
@@ -37,6 +39,7 @@ export class Level extends ex.Scene {
     });
 
     bestLabel = new ex.Label({
+        name: 'BestLabel',
         text: 'Best: 0',
         x: 400,
         y: 0,

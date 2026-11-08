@@ -8,6 +8,7 @@ import { Bird } from "./bird";
 export class ScoreTrigger extends ex.Actor {
     constructor(pos: ex.Vector, private level: Level) {
         super({
+            name: "ScoreTrigger",
             pos,
             width: 32,
             height: Config.PipeGap,

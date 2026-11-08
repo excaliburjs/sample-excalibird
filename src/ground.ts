@@ -7,6 +7,7 @@ export class Ground extends ex.Actor {
   moving = false;
   constructor(pos: ex.Vector) {
     super({
+      name: "Ground",
       pos,
       anchor: ex.vec(0, 0),
       height: 64,

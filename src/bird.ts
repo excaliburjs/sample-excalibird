@@ -13,6 +13,7 @@ export class Bird extends ex.Actor {
     downAnimation!: ex.Animation;
     constructor(private level: Level) {
         super({
+            name: "Bird",
             pos: Config.BirdStartPos,
             radius: 8,
             // rotating box double counts
